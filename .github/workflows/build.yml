@@ -24,7 +24,7 @@ jobs:
         run: npm run build
 
       - name: build image
-        run: docker build -t multistagecounter -f multistage.Dockerfile .
+        run: docker build -t ssrinivaspadala/multistagecounter -f multistage.Dockerfile .
 
       - name: login docker
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
