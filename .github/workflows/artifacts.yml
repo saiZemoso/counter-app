@@ -16,27 +16,27 @@ jobs:
               shell: bash
               run: echo 'this is from upload job!' > testartifact.txt
             - name: upload the artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v2
               with:
                 name: shared-artifact
-                path: testatestartifact.txt
+                path: testartifact.txt
     
     download:
         name: download artifact
         needs: upload
         runs-on: windows-latest
         steps:
-            - name: download the artifact
-              uses: actions/download-artifact@v3
+            - name: Download the artifact
+              uses: actions/download-artifact@v2
               with:
                 name: shared-artifact
             - name: run a script
               shell: bash
               run: echo 'this is from download job!' >> testartifact.txt
             - name: upload again
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v2
               with:
-                name: shared-artifact
+                name: view-artifact
                 path: testartifact.txt
     
     view:
@@ -45,9 +45,9 @@ jobs:
         runs-on: macos-latest
         steps:
             - name: download the artifact
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v2
               with: 
-                name: shared-artifact
+                name: view-artifact
             - name: print the artifact
               shell: bash
               run: cat testartifact.txt
