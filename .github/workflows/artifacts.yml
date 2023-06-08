@@ -36,7 +36,7 @@ jobs:
             - name: upload again
               uses: actions/upload-artifact@v3
               with:
-                name: view-artifact
+                name: shared-artifact
                 path: testartifact.txt
     
     view:
@@ -47,7 +47,7 @@ jobs:
             - name: download the artifact
               uses: actions/download-artifact@v3
               with: 
-                name: view-artifact
+                name: shared-artifact
             - name: print the artifact
               shell: bash
               run: cat testartifact.txt
