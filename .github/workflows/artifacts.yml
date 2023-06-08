@@ -10,6 +10,8 @@ jobs:
         name: upload artifact
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
             - name: run a script
               shell: bash
               run: cat 'this is from upload job!' > testartifact.txt
@@ -20,7 +22,7 @@ jobs:
                 path: testatestartifact.txt
     
     download:
-        name: downlaod artifact
+        name: download artifact
         needs: upload
         runs-on: windows-latest
         steps:
@@ -40,7 +42,7 @@ jobs:
     view:
         name: view artifact
         needs: download
-        runs-on: mac-os
+        runs-on: macos-latest
         steps:
             - name: download the artifact
               uses: actions/download-artifact@v3
