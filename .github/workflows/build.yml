@@ -17,5 +17,17 @@ jobs:
           node-version: 18.x
           cache: 'npm'
       
-      - run: npm ci
-      - run: npm run build
+      - name: install packages
+        run: npm ci
+
+      - name: build app
+        run: npm run build
+
+      - name: build image
+        run: docker build -t multistagecounter -f multistage.Dockerfile .
+
+      - name: login docker
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKER_PASS }}
+        
+      - name: push to docker hub
+        run: docker push multistagecounter 
