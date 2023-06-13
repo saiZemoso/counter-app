@@ -3,6 +3,7 @@ name: sharing artifacts
 on:
     push:
       branches: [ "main" ]
+      paths: "src/**"
 
 jobs:
 

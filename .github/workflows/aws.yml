@@ -11,25 +11,6 @@ jobs:
         name: deploy app
         runs-on: ubuntu-latest
 
-        # steps:
-
-        #     - name: checkout frontend dir as root dir
-        #       uses: actions/checkout@v3
-
-        #     - name: login aws
-        #       run: |
-        #         ls -l
-                 
-        #     - name: install node js
-        #       uses: actions/setup-node@v3
-        #       with:
-        #         node-version: 18.x
-            
-        #     - name: install packages and build app
-        #       run: |
-        #         npm ci
-        #         npm run build
-        #         ls -l
 
         steps:
             - name: Connect to EC2 instance
