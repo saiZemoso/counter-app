@@ -39,7 +39,6 @@ jobs:
               with:
                 name: view-artifact
                 path: testartifact.txt
-    
     view:
         name: view artifact
         needs: download
