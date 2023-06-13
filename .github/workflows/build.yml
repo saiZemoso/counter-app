@@ -38,10 +38,10 @@ jobs:
           restore-keys: ${{runner.os}}-docker-
 
       - name: build image
-        run: docker build -t ssrinivaspadala/multistagecounter -f multistage.Dockerfile .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/multistagecounter -f multistage.Dockerfile .
 
       - name: login docker
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
 
       - name: push to docker hub
-        run: docker push ssrinivaspadala/multistagecounter 
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/multistagecounter 
