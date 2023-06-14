@@ -3,47 +3,42 @@ name: build counter app
 on:
   push:
     branches: [ "main" ]
-    paths: "src/**"
 
 jobs:
-  build:
+
+  build_deploy_app:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v3
 
-      - name: caching the npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{runner.os}}-node-${{hashFiles('**/package-lock.json')}}
-          restore-keys: ${{runner.os}}-node-
-      
       - name: install node js
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
       
-      - name: install packages
-        run: npm ci
-
-      - name: build app
-        run: npm run build
-
-      - name: caching docker build
-        uses: actions/cache@v3
-        with:
-          path: var/lib/docker
-          key: ${{runner.os}}-docker-${{hashFiles('**/multistage.Dockerfile')}}
-          restore-keys: ${{runner.os}}-docker-
-
-      - name: build image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/multistagecounter -f multistage.Dockerfile .
+      - name: install packages and build react app
+        run: |
+          npm ci
+          npm run build
 
       - name: login docker
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
 
-      - name: push to docker hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/multistagecounter 
-
+      - name: build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
       
+      - name: Connect to EC2 instance
+        uses: easingthemes/ssh-deploy@main
+        with:
+            REMOTE_HOST: ${{ secrets.EC2_HOST }}
+            REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+            SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+            SCRIPT_AFTER: |
+              docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
