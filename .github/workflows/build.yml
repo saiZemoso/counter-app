@@ -41,4 +41,5 @@ jobs:
             REMOTE_USER: ${{ secrets.EC2_USERNAME }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
             SCRIPT_AFTER: |
-              docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
+              docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }} 
+              
