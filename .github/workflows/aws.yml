@@ -13,6 +13,11 @@ jobs:
 
 
         steps:
+          # - name: connect to ec2
+          #   run: |
+          #     ssh -i /home/srinp/my-first-pem.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}
+          #     docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v5
+
             - name: Connect to EC2 instance
               uses: easingthemes/ssh-deploy@main
               with:
@@ -20,4 +25,6 @@ jobs:
                 REMOTE_USER: ${{ secrets.EC2_USERNAME }}
                 SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
                 SCRIPT_AFTER: |
-                  docker run -d -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v5
+                  docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v5
+
+        

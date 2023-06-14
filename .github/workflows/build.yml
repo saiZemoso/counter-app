@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-
       
       - name: install packages
         run: npm ci
@@ -46,3 +45,5 @@ jobs:
 
       - name: push to docker hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/multistagecounter 
+
+      
