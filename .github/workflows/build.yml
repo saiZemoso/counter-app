@@ -12,9 +12,10 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v3
+      - name: checking out repo
+        uses: actions/checkout@v3
 
-      - name: install node js
+      - name: installing node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
@@ -25,21 +26,36 @@ jobs:
           npm run build
 
       - name: login docker
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+        run: |
+          echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_USERNAME }} --password-stdin
 
       - name: build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }}
-      
-      - name: Connect to EC2 instance
-        uses: easingthemes/ssh-deploy@main
-        with:
-            REMOTE_HOST: ${{ secrets.EC2_HOST }}
-            REMOTE_USER: ${{ secrets.EC2_USERNAME }}
-            SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-            SCRIPT_AFTER: |
-              docker run -d -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/frontend_app:v${{ github.run_number }} 
-              
+          tags: ghcr.io/${{ secrets.GIT_USERNAME }}/frontend_app:v${{ github.run_number }}
+
+      - name: connect EC2 using SSH
+        run: |
+          echo "${{secrets.EC2_PRIVATE_KEY}}" > private_key
+          chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ec2-user@ec2-3-239-24-86.compute-1.amazonaws.com '
+
+            echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_USERNAME }} --password-stdin
+            docker stop $(sudo docker ps -aq)
+            docker run -d -p 3000:80 ghcr.io/${{ secrets.GIT_USERNAME }}/frontend_app:v${{github.run_number}}
+            '
+
+      # - name: Connect to EC2 instance
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #       REMOTE_HOST: ${{ secrets.EC2_HOST }}
+      #       REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+      #       SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+      #       EXCLUDE: '**'
+      #       SCRIPT_AFTER: |
+      #         echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_USERNAME }} --password-stdin
+      #         docker stop $(sudo docker ps -aq)
+      #         docker pull ghcr.io/${{ secrets.GIT_USERNAME }}/frontend_app:v1
+      #         docker run -d -p 3000:80 ghcr.io/${{ secrets.GIT_USERNAME }}/frontend_app:v1
