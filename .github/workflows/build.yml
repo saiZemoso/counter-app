@@ -27,7 +27,7 @@ jobs:
 
       - name: login docker
         run: |
-          echo ${{ secrets.GIT_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_USERNAME }} --password-stdin
+          docker login ghcr.io -u ${{ secrets.GIT_USERNAME }} -p ${{ secrets.GIT_TOKEN }}
 
       - name: build and push
         uses: docker/build-push-action@v4
